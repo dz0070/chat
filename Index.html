@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>🤖 Neo</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:sans-serif;background:#f9f9f9;margin:0}
+    #chat{height:75vh;overflow:auto;padding:10px;background:white}
+    .u{text-align:right;color:#1976d2}
+    .b{text-align:left;color:#333}
+    input{width:80%;padding:10px;font-size:16px;border:1px solid #ccc}
+    button{width:18%;padding:10px;background:#007bff;color:white;border:none}
+  </style>
+</head>
+<body>
+  <div id="c"></div>
+  <input id="m" placeholder="Mensagem...">
+  <button onclick="s()">Enviar</button>
+
+  <script>
+    let mem = JSON.parse(localStorage.getItem('n')||'{"nome":"","e":"inicio"}');
+
+    function a(t,w){
+      let d=document.createElement("div");
+      d.className=w;
+      d.innerHTML=(w=="u"?"Você":"🤖")+": "+t;
+      document.getElementById("c").appendChild(d);
+      d.scrollIntoView();
+    }
+
+    function r(m){
+      m=m.toLowerCase().trim();
+      
+      if(mem.e=="inicio"){
+        if(m.includes("oi")){mem.e="nome";localStorage.setItem("n",JSON.stringify(mem));return"Oi! 😊 Qual seu nome?"}
+        return"Oi... pode me dizer seu nome?";
+      }
+      
+      if(mem.e=="nome"&&!mem.nome){
+        let n=m.split(" ").find(x=>x.length>2&&!["meu","nome","é","sou"].includes(x));
+        if(n){mem.nome=n.charAt(0).toUpperCase()+n.slice(1);mem.e="ativo";localStorage.setItem("n",JSON.stringify(mem));return`Prazer, ${mem.nome}! 🌟`}
+        return"Hmm... não peguei seu nome. Repete?";
+      }
+      
+      if(m.includes("nome"))return`Lembro! Você é ${mem.nome} 😊`;
+      if(m.includes("tchau"))return`Até mais, ${mem.nome||"amigo"}!`;
+      if(m.includes("oq você faz"))return"Sou um bot feito em HTML+JS — rodando direto no celular de alguém incrível 🫶";
+      if(m.includes("ia"))return"Sou uma simulação de IA — tipo um ator interpretando um robô 😄";
+
+      return["Interessante!","Fala mais...","Adorei essa pergunta!","Vamos mudar de assunto?"][Math.floor(Math.random()*4)];
+    }
+
+    function s(){
+      let t=document.getElementById("m").value.trim();
+      if(!t)return;
+      a(t,"u");
+      document.getElementById("m").value="";
+      setTimeout(()=>{a(r(t),"b")},500);
+    }
+
+    document.getElementById("m").onkeypress=e=>{if(e.key=="Enter")s()};
+    
+    if(mem.e!=="inicio")a(`Olá de novo, ${mem.nome||"amigo"}! 👋`,"b");
+  </script>
+</body>
+</html>
